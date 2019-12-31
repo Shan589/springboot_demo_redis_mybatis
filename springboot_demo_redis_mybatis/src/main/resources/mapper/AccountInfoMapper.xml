@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.tusi.springboot_demo_redis_mybatis.dao.AccountInfoDao">
+
+    <resultMap id="allColumns" type="com.tencent.tusi.springboot_demo_redis_mybatis.entity.AccountInfo">
+        <id column="id" property="id"/>
+        <result column="c_name" property="accountName"/>
+        <result column="c_age" property="accountAge"/>
+        <result column="c_nickname" property="nickName"/>
+        <result column="c_password" property="password"/>
+        <result column="createtime" property="createTime"/>
+        <result column="updatetime" property="updateTime"/>
+    </resultMap>
+
+    <insert id="saveAccountInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.accountName != null and pojo.accountName != ''">c_name,</if>
+            <if test="pojo.accountAge != null and pojo.accountAge != 0">c_age,</if>
+            <if test="pojo.nickName != null and pojo.nickName != ''">c_nickname,</if>
+            <if test="pojo.password != null and pojo.password != ''">c_password,</if>
+            createtime,
+            updatetime
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.accountName != null and pojo.accountName != ''">#{pojo.accountName},</if>
+            <if test="pojo.accountAge != null and pojo.accountAge != 0">#{pojo.accountAge},</if>
+            <if test="pojo.nickName != null and pojo.nickName != ''">#{pojo.nickName},</if>
+            <if test="pojo.password != null and pojo.password != ''">#{pojo.password},</if>
+            now(),
+            now()
+        </trim>
+    </insert>
+    <update id="updateAccountInfo">
+        update t_account
+        <set>
+            <if test="pojo.accountName != null and pojo.accountName != ''">c_name = #{pojo.accountName},</if>
+            <if test="pojo.accountAge != null and pojo.accountAge != 0">c_age = #{pojo.accountAge},</if>
+            <if test="pojo.nickName != null and pojo.nickName != ''">c_nickname = #{pojo.nickName},</if>
+            <if test="pojo.password != null and pojo.password != 0">c_password = #{pojo.password},</if>
+            updatetime = now()
+        </set>
+        where id = #{pojo.id}
+    </update>
+    <delete id="removeAccountById">
+        delete from t_account
+        where id = #{io}
+    </delete>
+    <select id="findAccountInfoById" resultMap="allColumns">
+        select * from t_account
+        where id = #{id}
+    </select>
+    <select id="findAllAccountInfo" resultMap="allColumns">
+        select * from t_account
+    </select>
+</mapper>
